@@ -1,4 +1,4 @@
-# Laboratory 04 — Records, Comparable aprofundat, Comparator multiplu
+# Laboratory 05 — Records, Comparable aprofundat, Comparator multiplu
 
 > **Pachet:** `com.pao.laboratory05` · **Curs:** 01–04 · 
 > **Data limită:** miercuri 25 martie 2026, ora 23:59
@@ -269,51 +269,51 @@ Opțiunea 1 citește: `nume` (String), `numeDepartament` (String), `locatieDepar
 <summary><b>Exemplu interacțiune</b></summary>
 
 ```
-===== Gestionare Angajați =====
-1. Adaugă angajat
-2. Listare după salariu
-3. Caută după departament
-0. Ieșire
-Opțiune: 1
-Nume: Ana
-Departament (nume): IT
-Departament (locatie): Cluj
-Salariu: 7500
-Angajat adăugat: Ana
-
-===== Gestionare Angajați =====
-Opțiune: 1
-Nume: Mihai
-Departament (nume): HR
-Departament (locatie): București
-Salariu: 5200
-Angajat adăugat: Mihai
-
-===== Gestionare Angajați =====
-Opțiune: 1
-Nume: Elena
-Departament (nume): IT
-Departament (locatie): Cluj
-Salariu: 8900
-Angajat adăugat: Elena
-
-===== Gestionare Angajați =====
-Opțiune: 2
---- Angajați după salariu (descrescător) ---
-1. Angajat{nume='Elena', departament=Departament[nume=IT, locatie=Cluj], salariu=8900.0}
-2. Angajat{nume='Ana', departament=Departament[nume=IT, locatie=Cluj], salariu=7500.0}
-3. Angajat{nume='Mihai', departament=Departament[nume=HR, locatie=București], salariu=5200.0}
-
-===== Gestionare Angajați =====
-Opțiune: 3
-Departament: IT
---- Angajați din IT ---
-Angajat{nume='Ana', departament=Departament[nume=IT, locatie=Cluj], salariu=7500.0}
-Angajat{nume='Elena', departament=Departament[nume=IT, locatie=Cluj], salariu=8900.0}
-
-===== Gestionare Angajați =====
-Opțiune: 0
-La revedere!
+  ===== Gestionare Angajați =====
+  1. Adaugă angajat
+  2. Listare după salariu
+  3. Caută după departament
+  0. Ieșire
+  Opțiune: 1
+  Nume: Ana
+  Departament (nume): IT
+  Departament (locatie): Cluj
+  Salariu: 7500
+  Angajat adăugat: Ana
+  
+  ===== Gestionare Angajați =====
+  Opțiune: 1
+  Nume: Mihai
+  Departament (nume): HR
+  Departament (locatie): București
+  Salariu: 5200
+  Angajat adăugat: Mihai
+  
+  ===== Gestionare Angajați =====
+  Opțiune: 1
+  Nume: Elena
+  Departament (nume): IT
+  Departament (locatie): Cluj
+  Salariu: 8900
+  Angajat adăugat: Elena
+  
+  ===== Gestionare Angajați =====
+  Opțiune: 2
+  --- Angajați după salariu (descrescător) ---
+  1. Angajat{nume='Elena', departament=Departament[nume=IT, locatie=Cluj], salariu=8900.0}
+  2. Angajat{nume='Ana', departament=Departament[nume=IT, locatie=Cluj], salariu=7500.0}
+  3. Angajat{nume='Mihai', departament=Departament[nume=HR, locatie=București], salariu=5200.0}
+  
+  ===== Gestionare Angajați =====
+  Opțiune: 3
+  Departament: IT
+  --- Angajați din IT ---
+  Angajat{nume='Ana', departament=Departament[nume=IT, locatie=Cluj], salariu=7500.0}
+  Angajat{nume='Elena', departament=Departament[nume=IT, locatie=Cluj], salariu=8900.0}
+  
+  ===== Gestionare Angajați =====
+  Opțiune: 0
+  La revedere!
 ```
 
 </details>
@@ -339,7 +339,7 @@ public record AuditEntry(String action, String target, String timestamp) { }
 - `target` — obiectul afectat (ex: numele angajatului sau numele departamentului)
 - `timestamp` — momentul acțiunii; folosește `java.time.LocalDateTime.now().toString()`
 
-#### `AngajatService.java` — Singleton cu audit
+  #### `AngajatService.java` — Singleton cu audit
 Același ca la Ex3, plus:
 - Câmp suplimentar: `private AuditEntry[] auditLog` (inițializat `new AuditEntry[0]`)
 - Metodă privată `logAction(String action, String target)` — creează un `AuditEntry`
