@@ -1,0 +1,60 @@
+5
+3
+Ana Ionescu
+ana@email.com
+Algoritmi
+4
+Vlad Georgescu
+vlad@email.com
+2
+1
+ana@email.com
+1
+Structuri de date
+Curs despre liste, stive si cozi
+2
+3
+Colectii in Java
+3
+3
+2
+Liste si ArrayList
+Lectie despre liste dinamice
+40
+4
+3
+Quiz Structuri de date
+Ce structura folosim pentru FIFO?
+2
+Coada
+Stiva
+1
+5
+2
+Ce structura folosim pentru LIFO?
+2
+Coada
+Stiva
+2
+6
+7
+Java
+8
+0
+2
+maria@email.com
+1
+2
+3
+3
+4
+2
+3
+6
+5
+6
+7
+3
+8
+0
+0

@@ -128,3 +128,19 @@ com.pao.elearning/
 ├── service/     ← serviciile singleton
 ├── exception/   ← excepțiile custom
 └── Main.java
+```
+
+---
+
+### Test Input Automat
+
+Pentru a testa meniul fără a introduce manual fiecare opțiune, există fișierul `input_test_meniu.txt`, care conține o secvență completă de comenzi pentru aplicație.
+
+La rularea cu `-DechoInput=true`, valorile citite din fișier sunt afișate în consolă ca și cum ar fi fost tastate manual.
+
+```powershell
+Get-Content -Encoding UTF8 ".\src\com\pao\elearning\input_test_meniu.txt" |
+    java "-DechoInput=true" "-Dfile.encoding=UTF-8" -cp ".\out\production\Proiect-Etapa-1" com.pao.elearning.Main
+```
+
+Pentru rularea normală/manuală, se pornește aplicația (tot din terminal) fără `-DechoInput=true`, sau direct cu `Run Main.java`.
