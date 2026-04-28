@@ -6,7 +6,9 @@ Proiectul modelează o platformă e-learning în care utilizatorii pot avea rolu
 
 ---
 
-## 1.1 Lista acțiunilor / interogărilor posibile în sistem
+## 1. Definirea sistemului
+
+### 1.1 — Lista acțiunilor / interogărilor posibile în sistem
 
 1. Adaugă un curs nou în platformă.
 2. Înregistrează un cursant nou.
@@ -24,9 +26,7 @@ Proiectul modelează o platformă e-learning în care utilizatorii pot avea rolu
 14. Caută cursuri după titlu.
 15. Generează un certificat pentru un cursant care a finalizat un curs.
 
----
-
-## 1.2 Lista tipurilor de obiecte din domeniu
+### 1.2 — Lista tipurilor de obiecte din domeniu
 
 1. `Utilizator`
 2. `Cursant`
@@ -40,7 +40,7 @@ Proiectul modelează o platformă e-learning în care utilizatorii pot avea rolu
 10. `RezultatQuiz`
 11. `Inscriere`
 12. `Certificat`
-13. 
+
 ---
 
 ## 2. Implementare Java
@@ -77,8 +77,6 @@ Proiectul modelează o platformă e-learning în care utilizatorii pot avea rolu
         - `QuizInvalidException`
     - Acestea sunt aruncate în servicii și tratate în `Main`.
 
----
-
 ### 2.2 — Colecții
 
 - [x] Cel puțin **2 tipuri diferite de colecții** (`List`, `Set`, `Map`, `Queue`, etc.)
@@ -94,8 +92,6 @@ Proiectul modelează o platformă e-learning în care utilizatorii pot avea rolu
     - În `CursService`, cursurile sunt indexate după `id` folosind `Map<Integer, Curs>`.
     - În `UtilizatorService`, utilizatorii sunt indexați după `id` și `email`.
     - În `InscriereService`, înscrierile sunt grupate după id-ul cursantului folosind `Map<Integer, List<Inscriere>>`.
-
----
 
 ### 2.3 — Servicii
 
@@ -121,8 +117,6 @@ Proiectul modelează o platformă e-learning în care utilizatorii pot avea rolu
 - [x] O clasă `Main` care apelează **toate cele 10 acțiuni** definite la punctul 1, demonstrând funcționarea completă a sistemului
     - Clasa `Main` creează obiecte de test și apelează serviciile sistemului.
     - Sunt demonstrate operații precum înregistrarea unui lector, înregistrarea unui cursant, adăugarea unui curs, înscrierea la curs, crearea unui quiz, calcularea scorului și generarea unui certificat.
-
----
 
 ### 2.4 — Organizare și calitate
 
