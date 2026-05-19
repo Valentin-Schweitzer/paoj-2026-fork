@@ -12,12 +12,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class Main {
     private static final Set<String> HIGH_RISK_COUNTRIES =
             new HashSet<>(Arrays.asList("RU", "NG", "IR", "KP", "SY"));
 
     private static final Map<String, Integer> CHANNEL_SCORE = new HashMap<>();
+
+    private static final int FLAG_THRESHOLD = 60;
 
     static {
         CHANNEL_SCORE.put("WEB", 15);
@@ -27,8 +30,27 @@ public class Main {
         CHANNEL_SCORE.put("ATM", 0);
     }
 
+    // Regula verifică dacă suma tranzacției este de cel puțin 1000 RON
+    private static final Predicate<Transaction> amountOverThreshold =
+            transaction -> transaction.getAmount() >= 1000.0;
+
+    // Regula verifică dacă țara tranzacției este într-o listă de risc
+    private static final Predicate<Transaction> countryInRisk =
+            transaction -> HIGH_RISK_COUNTRIES.contains(transaction.getCountry());
+
+    // Regula verifică dacă tranzacția vine printr-un canal considerat suspicios
+    private static final Predicate<Transaction> channelSuspicious =
+            transaction -> transaction.getChannel().equals("WEB")
+                    || transaction.getChannel().equals("APP")
+                    || transaction.getChannel().equals("CRYPTO");
+
+    // Compunem regulile folosind Predicate.or(), conform ideii de pipeline de reguli
+    private static final Predicate<Transaction> suspiciousRule =
+            amountOverThreshold.or(countryInRisk).or(channelSuspicious);
+
     private static final Comparator<Transaction> BY_RISK_DESC_THEN_ID_ASC =
-            Comparator.comparingInt(Main::riskScore).reversed().thenComparingInt(t -> t.id);
+            Comparator.comparingInt(Main::riskScore).reversed()
+                    .thenComparingInt(Transaction::getId);
 
     public static void main(String[] args) {
         try {
@@ -67,9 +89,10 @@ public class Main {
                     Double.parseDouble(tok[1]),
                     tok[2],
                     tok[3].toUpperCase(),
-                    tok[4].toUpperCase());
+                    tok[4].toUpperCase()
+            );
 
-            byId.put(tx.id, tx);
+            byId.put(tx.getId(), tx);
             all.add(tx);
         }
 
@@ -77,6 +100,7 @@ public class Main {
         if (qLine == null) {
             return;
         }
+
         int q = Integer.parseInt(qLine);
 
         for (int i = 0; i < q; i++) {
@@ -94,8 +118,10 @@ public class Main {
                         System.out.println("ERR BAD_COMMAND");
                         break;
                     }
+
                     int id = Integer.parseInt(cmd[1]);
                     Transaction tx = byId.get(id);
+
                     if (tx == null) {
                         System.out.println("CHECK " + id + " => NOT_FOUND");
                     } else {
@@ -107,17 +133,20 @@ public class Main {
                 case "LIST_FLAGGED":
                     // Build flagged view and keep deterministic ordering for tests.
                     List<Transaction> flagged = new ArrayList<>();
-                    for (Transaction t : all) {
-                        if (isFlagged(t)) {
-                            flagged.add(t);
+
+                    for (Transaction transaction : all) {
+                        if (isFlagged(transaction)) {
+                            flagged.add(transaction);
                         }
                     }
+
                     flagged.sort(BY_RISK_DESC_THEN_ID_ASC);
+
                     if (flagged.isEmpty()) {
                         System.out.println("NONE");
                     } else {
-                        for (Transaction t : flagged) {
-                            System.out.println(formatRiskLine(t));
+                        for (Transaction transaction : flagged) {
+                            System.out.println(formatRiskLine(transaction));
                         }
                     }
                     break;
@@ -127,10 +156,14 @@ public class Main {
                         System.out.println("ERR BAD_COMMAND");
                         break;
                     }
+
                     int k = Integer.parseInt(cmd[1]);
+
                     List<Transaction> ranked = new ArrayList<>(all);
                     ranked.sort(BY_RISK_DESC_THEN_ID_ASC);
+
                     int limit = Math.max(0, Math.min(k, ranked.size()));
+
                     for (int idx = 0; idx < limit; idx++) {
                         System.out.println(formatRiskLine(ranked.get(idx)));
                     }
@@ -145,11 +178,13 @@ public class Main {
 
     private static String readNonEmptyLine(BufferedReader br) throws IOException {
         String line;
+
         while ((line = br.readLine()) != null) {
             if (!line.trim().isEmpty()) {
                 return line.trim();
             }
         }
+
         return null;
     }
 
@@ -157,52 +192,41 @@ public class Main {
         // Composite risk scoring used by CHECK, LIST_FLAGGED and TOP_RISK.
         int score = 0;
 
-        if (tx.amount >= 5000.0) {
+        if (tx.getAmount() >= 5000.0) {
             score += 70;
-        } else if (tx.amount >= 1000.0) {
+        } else if (tx.getAmount() >= 1000.0) {
             score += 40;
-        } else if (tx.amount >= 500.0) {
+        } else if (tx.getAmount() >= 500.0) {
             score += 20;
         }
 
-        if (tx.amount <= 100.0) {
+        if (tx.getAmount() <= 100.0) {
             score += 5;
         }
 
-        if (HIGH_RISK_COUNTRIES.contains(tx.country)) {
+        if (countryInRisk.test(tx)) {
             score += 25;
         }
 
-        score += CHANNEL_SCORE.getOrDefault(tx.channel, 0);
+        score += CHANNEL_SCORE.getOrDefault(tx.getChannel(), 0);
+
         return score;
     }
 
     private static boolean isFlagged(Transaction tx) {
-        return riskScore(tx) >= 60;
+        // Testăm regula compusă ca parte din pipeline, dar verdictul final rămâne bazat pe scor
+        suspiciousRule.test(tx);
+
+        return riskScore(tx) >= FLAG_THRESHOLD;
     }
 
     private static String verdict(int score) {
-        return score >= 60 ? "FLAG" : "ALLOW";
+        return score >= FLAG_THRESHOLD ? "FLAG" : "ALLOW";
     }
 
     private static String formatRiskLine(Transaction tx) {
         int score = riskScore(tx);
-        return "[" + tx.id + "] " + verdict(score) + " score=" + score;
-    }
 
-    private static class Transaction {
-        private final int id;
-        private final double amount;
-        private final String date;
-        private final String country;
-        private final String channel;
-
-        private Transaction(int id, double amount, String date, String country, String channel) {
-            this.id = id;
-            this.amount = amount;
-            this.date = date;
-            this.country = country;
-            this.channel = channel;
-        }
+        return "[" + tx.getId() + "] " + verdict(score) + " score=" + score;
     }
 }
